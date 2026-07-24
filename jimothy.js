@@ -55,6 +55,7 @@
   function onCrossEnd(e) {
     if (e.animationName !== "jimothy-cross") return;
     raccoon.classList.remove("jimothy-animate");
+    raccoon.style.left = "-9999px"; // hide offscreen during the pause
     hopTimer = setTimeout(scamper, 4000 + Math.random() * 8000); // pause 4-12s
   }
 

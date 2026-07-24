@@ -57,6 +57,7 @@ function scamper() {
 raccoon.addEventListener("animationend", (e) => {
   if (e.animationName !== "jimothy-cross") return;
   raccoon.classList.remove("jimothy-animate");
+  raccoon.style.left = "-9999px";
   setTimeout(scamper, 1500 + Math.random() * 2000);
 });
 scamper();
