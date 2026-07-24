@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Jimothy the Raccoon",
+  "version": "1.0.0",
+  "description": "Jimothy the raccoon scampers across every page you visit.",
+  "icons": {
+    "128": "assets/jimothy_run.png"
+  },
+  "action": {
+    "default_title": "Toggle Jimothy",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["jimothy.js"],
+      "css": ["jimothy.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
