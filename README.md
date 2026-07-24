@@ -23,6 +23,15 @@ animates it with pure CSS:
 He sits at `z-index: 2147483647` with `pointer-events: none`, so he floats above
 page content without ever blocking clicks.
 
+### Strict Content-Security-Policy sites
+
+Some sites (Wikipedia, GitHub, etc.) send a strict CSP whose `img-src` /
+`default-src` doesn't allow the `chrome-extension:` scheme, which blocks the
+sprite from loading. To stay compatible, the content script fetches the sprite
+from the extension and serves it to the page as a **blob URL** (`blob:` is
+permitted by virtually all such policies), so Jimothy renders even on locked-down
+pages.
+
 ### Navigation resilience
 
 - **Full page loads** re-inject the content script, so Jimothy reappears on the

@@ -7,6 +7,7 @@
   console.log("[Jimothy] content script injected on", location.href);
 
   const FRAME_URL = chrome.runtime.getURL("assets/jimothy_run.png");
+  let spriteUrl = FRAME_URL; // replaced with a blob: URL once fetched (see below)
   let raccoon = null;
   let hopTimer = null;
   let guard = null;
@@ -15,7 +16,7 @@
   function createRaccoon() {
     const el = document.createElement("div");
     el.id = ID;
-    el.style.backgroundImage = `url("${FRAME_URL}")`;
+    el.style.backgroundImage = `url("${spriteUrl}")`;
     document.documentElement.appendChild(el);
     return el;
   }
@@ -103,14 +104,32 @@
     }
   }
 
-  // Respect the per-user toggle (default: on).
-  chrome.storage.sync.get({ jimothyEnabled: true }, (cfg) => {
-    if (cfg.jimothyEnabled) enable();
-  });
+  // Some sites (e.g. Wikipedia) ship a strict Content-Security-Policy whose
+  // default-src / img-src does NOT allow the chrome-extension: scheme, so a
+  // background-image pointing at chrome-extension://.../jimothy_run.png is
+  // blocked and Jimothy never paints. Those same policies almost always allow
+  // blob: (and data:), so we fetch the sprite from the extension (a same-origin
+  // extension fetch, not governed by the page CSP) and hand the page a blob URL.
+  function boot() {
+    // Respect the per-user toggle (default: on).
+    chrome.storage.sync.get({ jimothyEnabled: true }, (cfg) => {
+      if (cfg.jimothyEnabled) enable();
+    });
 
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && "jimothyEnabled" in changes) {
-      changes.jimothyEnabled.newValue ? enable() : disable();
-    }
-  });
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === "sync" && "jimothyEnabled" in changes) {
+        changes.jimothyEnabled.newValue ? enable() : disable();
+      }
+    });
+  }
+
+  fetch(FRAME_URL)
+    .then((r) => r.blob())
+    .then((blob) => {
+      spriteUrl = URL.createObjectURL(blob);
+    })
+    .catch(() => {
+      // Fall back to the extension URL (works on sites without a strict CSP).
+    })
+    .finally(boot);
 })();
