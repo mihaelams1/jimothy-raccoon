@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+html,body{margin:0;height:100%;background:#eef;}
+#jimothy-raccoon {
+  position: fixed; bottom: 0; left: 0;
+  width: 432px; height: 336px;
+  transform-origin: bottom left;
+  transform: translateX(-480px) scale(var(--jimothy-scale, 0.4));
+  z-index: 2147483647; pointer-events: none;
+  background-repeat: no-repeat; background-size: 2160px 336px;
+}
+#jimothy-raccoon.jimothy-animate {
+  animation:
+    jimothy-cycle 0.417s steps(5) infinite,
+    jimothy-cross var(--jimothy-cross-duration, 6s) linear var(--jimothy-cross-timing, 1) forwards;
+}
+@keyframes jimothy-cycle { from { background-position-x: 0; } to { background-position-x: -2160px; } }
+@keyframes jimothy-cross { from { left: var(--jimothy-from, -480px); } to { left: var(--jimothy-to, 100vw); } }
+</style>
+</head>
+<body>
+<script>
+const el = document.createElement("div");
+el.id = "jimothy-raccoon";
+el.style.backgroundImage = 'url("assets/jimothy_run.png")';
+document.documentElement.appendChild(el);
+el.style.setProperty("--jimothy-from", "-480px");
+el.style.setProperty("--jimothy-to", "100vw");
+el.style.setProperty("--jimothy-cross-duration", "6s");
+el.classList.add("jimothy-animate");
+</script>
+</body>
+</html>

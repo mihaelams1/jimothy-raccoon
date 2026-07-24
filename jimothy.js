@@ -4,6 +4,8 @@
   const ID = "jimothy-raccoon";
   if (document.getElementById(ID)) return; // avoid duplicates on re-injection
 
+  console.log("[Jimothy] content script injected on", location.href);
+
   const FRAME_URL = chrome.runtime.getURL("assets/jimothy_run.png");
   let raccoon = null;
   let hopTimer = null;
