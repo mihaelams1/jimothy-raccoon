@@ -9,6 +9,8 @@
   const FRAME_URL = chrome.runtime.getURL("assets/jimothy_run.png");
   let raccoon = null;
   let hopTimer = null;
+  let guard = null;
+  let wantEnabled = false;
 
   function createRaccoon() {
     const el = document.createElement("div");
@@ -60,18 +62,44 @@
   }
 
   function enable() {
-    if (raccoon) return;
+    wantEnabled = true;
+    if (raccoon && raccoon.isConnected) return;
     raccoon = createRaccoon();
     raccoon.addEventListener("animationend", onCrossEnd);
     scamper();
+    startGuard();
   }
 
   function disable() {
+    wantEnabled = false;
+    stopGuard();
     if (hopTimer) clearTimeout(hopTimer);
     hopTimer = null;
     if (raccoon) {
       raccoon.remove();
       raccoon = null;
+    }
+  }
+
+  // SPA navigations often replace large chunks of the DOM (or the whole <body>),
+  // taking Jimothy with them. Watch for his removal and bring him back.
+  function startGuard() {
+    if (guard) return;
+    guard = new MutationObserver(() => {
+      if (wantEnabled && (!raccoon || !raccoon.isConnected)) {
+        if (hopTimer) clearTimeout(hopTimer);
+        raccoon = createRaccoon();
+        raccoon.addEventListener("animationend", onCrossEnd);
+        scamper();
+      }
+    });
+    guard.observe(document.documentElement, { childList: true, subtree: true });
+  }
+
+  function stopGuard() {
+    if (guard) {
+      guard.disconnect();
+      guard = null;
     }
   }
 

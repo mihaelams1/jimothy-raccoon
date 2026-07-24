@@ -23,6 +23,14 @@ animates it with pure CSS:
 He sits at `z-index: 2147483647` with `pointer-events: none`, so he floats above
 page content without ever blocking clicks.
 
+### Navigation resilience
+
+- **Full page loads** re-inject the content script, so Jimothy reappears on the
+  new page automatically.
+- **SPA navigations** (`history.pushState` / client-side routing) often swap out
+  the DOM and remove Jimothy without a fresh document load. A `MutationObserver`
+  watches for his removal and re-attaches him so he survives in-app navigation.
+
 ## Toggle
 
 Click the toolbar icon for a popup with an on/off switch. The setting is stored
