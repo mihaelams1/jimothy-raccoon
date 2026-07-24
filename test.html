@@ -2,35 +2,64 @@
 <html>
 <head>
 <meta charset="utf-8">
+<title>Jimothy preview</title>
 <style>
-html,body{margin:0;height:100%;background:#eef;}
+html,body{margin:0;height:100%;background:#eef;overflow:hidden;font-family:system-ui;}
 #jimothy-raccoon {
-  position: fixed; bottom: 0; left: 0;
+  position: fixed; left: 0; bottom: var(--jimothy-bottom, 0px);
   width: 432px; height: 336px;
   transform-origin: bottom left;
-  transform: translateX(-480px) scale(var(--jimothy-scale, 0.4));
+  transform: scale(var(--jimothy-scale, 0.4));
   z-index: 2147483647; pointer-events: none;
   background-repeat: no-repeat; background-size: 2160px 336px;
+  will-change: left, background-position;
+}
+#jimothy-raccoon.jimothy-flip {
+  transform: scale(var(--jimothy-scale, 0.4)) translateX(432px) scaleX(-1);
 }
 #jimothy-raccoon.jimothy-animate {
   animation:
     jimothy-cycle 0.417s steps(5) infinite,
-    jimothy-cross var(--jimothy-cross-duration, 6s) linear var(--jimothy-cross-timing, 1) forwards;
+    jimothy-cross var(--jimothy-cross-duration, 6s) linear 1 forwards;
 }
 @keyframes jimothy-cycle { from { background-position-x: 0; } to { background-position-x: -2160px; } }
-@keyframes jimothy-cross { from { left: var(--jimothy-from, -480px); } to { left: var(--jimothy-to, 100vw); } }
+@keyframes jimothy-cross { from { left: var(--jimothy-from, -500px); } to { left: var(--jimothy-to, 100vw); } }
 </style>
 </head>
 <body>
+<p>Standalone preview of the animation (no extension needed). Jimothy runs at a
+random height, in a random direction, flipping to face the way he's going.</p>
 <script>
-const el = document.createElement("div");
-el.id = "jimothy-raccoon";
-el.style.backgroundImage = 'url("assets/jimothy_run.png")';
-document.documentElement.appendChild(el);
-el.style.setProperty("--jimothy-from", "-480px");
-el.style.setProperty("--jimothy-to", "100vw");
-el.style.setProperty("--jimothy-cross-duration", "6s");
-el.classList.add("jimothy-animate");
+const raccoon = document.createElement("div");
+raccoon.id = "jimothy-raccoon";
+raccoon.style.backgroundImage = 'url("assets/jimothy_run.png")';
+document.documentElement.appendChild(raccoon);
+
+function scamper() {
+  const goingRight = Math.random() < 0.5;
+  const vw = window.innerWidth, vh = window.innerHeight, offscreen = 500;
+  const maxBottom = Math.max(0, vh - 336 * 0.4 - 20);
+  raccoon.style.setProperty("--jimothy-bottom", `${Math.random() * maxBottom}px`);
+  if (goingRight) {
+    raccoon.style.setProperty("--jimothy-from", `${-offscreen}px`);
+    raccoon.style.setProperty("--jimothy-to", `${vw}px`);
+    raccoon.classList.add("jimothy-flip");
+  } else {
+    raccoon.style.setProperty("--jimothy-from", `${vw}px`);
+    raccoon.style.setProperty("--jimothy-to", `${-offscreen}px`);
+    raccoon.classList.remove("jimothy-flip");
+  }
+  raccoon.style.setProperty("--jimothy-cross-duration", `${5 + Math.random() * 4}s`);
+  raccoon.classList.remove("jimothy-animate");
+  void raccoon.offsetWidth;
+  raccoon.classList.add("jimothy-animate");
+}
+raccoon.addEventListener("animationend", (e) => {
+  if (e.animationName !== "jimothy-cross") return;
+  raccoon.classList.remove("jimothy-animate");
+  setTimeout(scamper, 1500 + Math.random() * 2000);
+});
+scamper();
 </script>
 </body>
 </html>

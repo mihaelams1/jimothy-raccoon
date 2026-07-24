@@ -24,16 +24,22 @@
     // Random direction each run.
     const goingRight = Math.random() < 0.5;
     const vw = window.innerWidth;
-    const offscreen = 480; // frame width, so he fully clears the edge
+    const vh = window.innerHeight;
+    const offscreen = 500; // frame width, so he fully clears the edge
+
+    // Random vertical start: anywhere from the bottom up to ~near the top.
+    const visibleHeight = 336 * 0.4;
+    const maxBottom = Math.max(0, vh - visibleHeight - 20);
+    raccoon.style.setProperty("--jimothy-bottom", `${Math.random() * maxBottom}px`);
 
     if (goingRight) {
       raccoon.style.setProperty("--jimothy-from", `${-offscreen}px`);
       raccoon.style.setProperty("--jimothy-to", `${vw}px`);
-      raccoon.classList.remove("jimothy-flip");
+      raccoon.classList.add("jimothy-flip"); // art faces left, so flip to face right
     } else {
       raccoon.style.setProperty("--jimothy-from", `${vw}px`);
       raccoon.style.setProperty("--jimothy-to", `${-offscreen}px`);
-      raccoon.classList.add("jimothy-flip");
+      raccoon.classList.remove("jimothy-flip"); // art already faces left
     }
 
     // Randomize crossing speed a little for character.

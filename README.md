@@ -14,8 +14,10 @@ animates it with pure CSS:
   `background-position` across the sheet.
 - **Crossing motion** — a second keyframe animation slides Jimothy from one edge
   of the viewport to the other.
-- **Random direction** — each run picks left→right or right→left; the sprite is
-  flipped with `scaleX(-1)` when heading left.
+- **Random direction** — each run picks left→right or right→left; the source art
+  faces left, so the sprite is flipped with `scaleX(-1)` when heading right.
+- **Random height** — each crossing starts at a random vertical position, from the
+  bottom of the viewport up toward the top.
 - **Pauses** — after each crossing he waits 4–12s, then scampers again.
 
 He sits at `z-index: 2147483647` with `pointer-events: none`, so he floats above
@@ -28,8 +30,8 @@ in `chrome.storage.sync` (default: on) and applies live across open tabs.
 
 ## Accessibility
 
-Honors `prefers-reduced-motion: reduce` — the run cycle is disabled for users who
-ask for reduced motion.
+Jimothy is pure whimsy, so he ignores `prefers-reduced-motion` — the running
+animation always plays. Use the toolbar toggle to turn him off entirely.
 
 ## Load it locally
 

@@ -1,30 +1,33 @@
-/* One 432x336 frame from a 5-frame (2160x336) horizontal sprite sheet. */
+/* One 432x336 frame from a 5-frame (2160x336) horizontal sprite sheet.
+   The source art faces LEFT (Jimothy runs to the left by default). */
 #jimothy-raccoon {
   position: fixed;
-  bottom: 0;
   left: 0;
+  bottom: var(--jimothy-bottom, 0px);
   width: 432px;
   height: 336px;
   /* Scaled down so Jimothy isn't enormous; tweak --jimothy-scale to taste. */
   transform-origin: bottom left;
-  transform: translateX(-480px) scale(var(--jimothy-scale, 0.4));
+  transform: scale(var(--jimothy-scale, 0.4));
   z-index: 2147483647;
   pointer-events: none;
   background-repeat: no-repeat;
   background-size: 2160px 336px;
-  will-change: transform, background-position;
+  will-change: left, background-position;
+}
+
+/* Flip horizontally so Jimothy faces RIGHT when running left-to-right.
+   translateX(432px) compensates for the bottom-left transform origin so the
+   flipped sprite lands in the same spot as the un-flipped one. */
+#jimothy-raccoon.jimothy-flip {
+  transform: scale(var(--jimothy-scale, 0.4)) translateX(432px) scaleX(-1);
 }
 
 /* Cycle through the 5 frames: 5 frames / 12fps ≈ 0.417s per stride. */
 #jimothy-raccoon.jimothy-animate {
   animation:
     jimothy-cycle 0.417s steps(5) infinite,
-    jimothy-cross var(--jimothy-cross-duration, 6s) linear var(--jimothy-cross-timing, 1) forwards;
-}
-
-/* Flip horizontally when running right-to-left. */
-#jimothy-raccoon.jimothy-flip {
-  transform: translateX(-480px) scale(var(--jimothy-scale, 0.4)) scaleX(-1);
+    jimothy-cross var(--jimothy-cross-duration, 6s) linear 1 forwards;
 }
 
 @keyframes jimothy-cycle {
@@ -33,12 +36,6 @@
 }
 
 @keyframes jimothy-cross {
-  from { left: var(--jimothy-from, -480px); }
+  from { left: var(--jimothy-from, -500px); }
   to   { left: var(--jimothy-to, 100vw); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #jimothy-raccoon.jimothy-animate {
-    animation: none;
-  }
 }
