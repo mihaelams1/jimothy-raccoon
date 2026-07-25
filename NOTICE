@@ -1,0 +1,31 @@
+Jimothy the Raccoon — NOTICE
+============================
+
+This file clarifies the copyright scope of the materials in this repository. It
+supplements, and does not modify, the terms of the LICENSE file.
+
+Source code and asset processing
+--------------------------------
+All source code (the extension scripts, the generator/import tooling, build and
+configuration files) and the creative/technical processing that turns the raw
+artwork into the final sprite sheet — background removal, watermark and outline
+cleanup, segmentation, uniform scaling, baseline alignment, and sprite-sheet
+compilation — are original works authored for this project and are licensed
+under the ISC License (see LICENSE), Copyright (c) 2026 Mihaela Korte.
+
+AI-generated artwork
+--------------------
+The base raccoon run-cycle artwork used to produce `assets/jimothy_run.png` was
+generated with Google Gemini. Under current U.S. Copyright Office guidance,
+material produced solely by a generative AI system, without sufficient human
+authorship, may not be eligible for copyright protection. Accordingly, no claim
+of exclusive copyright is made over the underlying AI-generated raccoon imagery
+itself. The ISC license above applies to the source code and to the human-
+authored processing and compilation of the assets.
+
+Toolbar icon
+------------
+The toolbar/extension icon is derived from the raccoon emoji in Twemoji
+(https://github.com/jdecked/twemoji), Copyright Twitter, Inc. and other
+contributors, licensed under CC-BY 4.0
+(https://creativecommons.org/licenses/by/4.0/).

@@ -90,8 +90,8 @@ short-spine syndrome — hence the hunched, humpbacked silhouette, the low head,
 the dark grizzled fur, and the stubby tail.
 
 The committed sprite sheet (`assets/jimothy_run.png`) is a 5-frame run cycle
-imported from a hand-provided run-cycle image (AI-generated, then hand-picked)
-and normalised by [`tools/import_sheet.js`](tools/import_sheet.js), which:
+built from a base image generated with **Google Gemini**, then normalised by
+[`tools/import_sheet.js`](tools/import_sheet.js), which:
 
 - keys out the baked-in checkerboard background into a real alpha channel
   (flood fill from the edges, gated on saturation + brightness so it stops at
@@ -125,10 +125,19 @@ A fully procedural, from-scratch alternative also lives in
 
 ## Credits
 
-- **Jimothy sprite** — modelled on the real Jimothy, a Seattle raccoon;
-  the committed run cycle was imported and normalized by `tools/import_sheet.js`,
-  and a from-scratch procedural version is available via `tools/gen_jimothy.js`.
+- **Jimothy sprite** — modelled on the real Jimothy, a Seattle raccoon. The
+  base run-cycle art was generated with **Google Gemini**, then processed for
+  this project by `tools/import_sheet.js` (background removal, watermark/glow
+  cleanup, uniform scaling, and sprite-sheet assembly). A from-scratch
+  procedural alternative is available via `tools/gen_jimothy.js`. Because the
+  base art is AI-generated, portions may not be independently copyrightable —
+  see [`NOTICE`](NOTICE).
 - **Toolbar icon** — the raccoon emoji from
   [Twemoji](https://github.com/jdecked/twemoji), © Twitter, Inc. and other
   contributors, licensed under
   [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+## License
+
+Source code is licensed under the [ISC License](LICENSE) © 2026 Mihaela Korte.
+See [`NOTICE`](NOTICE) for the copyright scope of the AI-generated artwork.
