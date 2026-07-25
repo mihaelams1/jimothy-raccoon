@@ -10,12 +10,12 @@ const sharp = require("sharp");
 const fs = require("fs");
 
 const FW = 432, FH = 336, N = 5;
-const SRC = process.argv[2] || "C:/Temp/Gemini_Generated_Image_xfrdbdxfrdbdxfrd.png";
+const SRC = process.argv[2] || "C:/Temp/Gemini_Generated_Image_q4324nq4324nq432.png";
 const OUT = "C:/Temp/jimothy-raccoon/assets/jimothy_run.png";
 
-// Background classifier thresholds (see isBg): neutral + mid-brightness checker.
-const SAT_BG = 22, LO_A = 36, HI_A = 152;      // strict, for the flood seed/interior
-const SAT_FR = 28, LO_FR = 30, HI_FR = 162;    // looser, for the defringe edge pass
+// Background classifier thresholds (see isBg): neutral + bright checker.
+const SAT_BG = 12, LO_A = 160, HI_A = 255;     // strict, for the flood seed/interior
+const SAT_FR = 16, LO_FR = 150, HI_FR = 255;   // looser, for the defringe edge pass
 
 // Background = the baked checkerboard: neutral (low saturation) and mid-brightness.
 // The olive fur is saturated; the outline is very dark; the face is bright.
@@ -148,7 +148,9 @@ async function main() {
   //    every frame reads at the same size and vertical position (no jitter).
   const PAD = 0.92;                 // fraction of the cell frame #4 fills
   const ref = boxes[3];             // frame #4 (0-indexed 3) is the reference
-  const scale = Math.min((FW * PAD) / ref.w, (FH * PAD) / ref.h);
+  // Cap so even the widest/tallest pose (the mid-air leap) still fits the cell.
+  const fitAll = Math.min(...boxes.map(b => Math.min(FW / b.w, FH / b.h))) * 0.98;
+  const scale = Math.min((FW * PAD) / ref.w, (FH * PAD) / ref.h, fitAll);
   const baseline = Math.round(FH * 0.95);   // feet sit here in every cell
 
   const cells = [];

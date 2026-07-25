@@ -33,7 +33,7 @@
 #jimothy-raccoon.jimothy-animate {
   animation:
     jimothy-cycle 0.5s steps(5) infinite,
-    jimothy-cross var(--jimothy-cross-duration, 14s) linear 1 forwards !important;
+    jimothy-cross var(--jimothy-cross-duration, 10s) linear 1 forwards !important;
 }
 
 @keyframes jimothy-cycle {
