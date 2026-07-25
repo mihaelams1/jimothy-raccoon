@@ -120,8 +120,8 @@ A fully procedural, from-scratch alternative also lives in
 ## Tweaks
 
 - Size: change `--jimothy-scale` in `jimothy.css` (default `0.4`).
-- Speed: adjust the `5 + Math.random() * 4` crossing duration in `jimothy.js`.
-- Frame rate: the `0.417s steps(5)` in `jimothy.css` = 5 frames ÷ 12fps.
+- Speed: adjust the `11 + Math.random() * 6` crossing duration in `jimothy.js`.
+- Frame rate: the `0.5s steps(5)` in `jimothy.css` = 5 frames ÷ 10fps.
 
 ## Credits
 

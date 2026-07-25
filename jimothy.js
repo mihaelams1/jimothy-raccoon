@@ -46,7 +46,7 @@
     }
 
     // Randomize crossing speed a little for character.
-    const duration = 5 + Math.random() * 4; // 5-9s
+    const duration = 11 + Math.random() * 6; // 11-17s to amble across
     raccoon.style.setProperty("--jimothy-cross-duration", `${duration}s`);
 
     // Restart animations.

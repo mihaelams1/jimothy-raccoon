@@ -23,7 +23,7 @@
   transform: scale(var(--jimothy-scale, 0.4)) translateX(432px) scaleX(-1);
 }
 
-/* Cycle through the 5 frames: 5 frames / 12fps ≈ 0.417s per stride.
+/* Cycle through the 5 frames at ~10fps (0.5s per stride) for a relaxed amble.
    Marked !important because many sites (GitHub, Bootstrap, Tailwind, normalize)
    ship a global `@media (prefers-reduced-motion: reduce)` reset that forces
    `animation-duration: 0.01ms !important; animation-iteration-count: 1 !important`
@@ -32,8 +32,8 @@
    even when the user's OS has reduced motion enabled. */
 #jimothy-raccoon.jimothy-animate {
   animation:
-    jimothy-cycle 0.417s steps(5) infinite,
-    jimothy-cross var(--jimothy-cross-duration, 6s) linear 1 forwards !important;
+    jimothy-cycle 0.5s steps(5) infinite,
+    jimothy-cross var(--jimothy-cross-duration, 14s) linear 1 forwards !important;
 }
 
 @keyframes jimothy-cycle {
