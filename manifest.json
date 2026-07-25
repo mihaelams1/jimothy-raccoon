@@ -4,11 +4,20 @@
   "version": "1.0.0",
   "description": "Jimothy the raccoon scampers across every page you visit.",
   "icons": {
-    "128": "assets/jimothy_run.png"
+    "16": "assets/icon_16.png",
+    "32": "assets/icon_32.png",
+    "48": "assets/icon_48.png",
+    "128": "assets/icon_128.png"
   },
   "action": {
     "default_title": "Toggle Jimothy",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icon_16.png",
+      "32": "assets/icon_32.png",
+      "48": "assets/icon_48.png",
+      "128": "assets/icon_128.png"
+    }
   },
   "permissions": ["storage"],
   "content_scripts": [

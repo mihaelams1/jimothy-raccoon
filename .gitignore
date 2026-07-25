@@ -2,3 +2,8 @@ node_modules/
 *.zip
 .DS_Store
 Thumbs.db
+
+# Generated preview frames + intermediates (the sprite sheet itself is committed)
+tools/frame_*.png
+tools/emoji_test.png
+tools/twemoji_raccoon.svg

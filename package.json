@@ -1,0 +1,24 @@
+{
+  "name": "jimothy-raccoon",
+  "version": "1.0.0",
+  "description": "A Chrome extension (Manifest V3) that sends Jimothy the raccoon scampering across every page you visit.",
+  "main": "jimothy.js",
+  "scripts": {
+    "gen": "node tools/gen_jimothy.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mihaelams1/jimothy-raccoon.git"
+  },
+  "keywords": ["chrome-extension", "raccoon", "fun"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mihaelams1/jimothy-raccoon/issues"
+  },
+  "homepage": "https://github.com/mihaelams1/jimothy-raccoon#readme",
+  "devDependencies": {
+    "sharp": "^0.35.3"
+  }
+}
