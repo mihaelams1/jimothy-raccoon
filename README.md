@@ -85,7 +85,7 @@ animation always plays. Use the toolbar toggle to turn him off entirely.
 
 ## The artwork
 
-Jimothy is modelled on the real **"Jimothy Summer"**, a Seattle raccoon with
+Jimothy is modelled on the real **Jimothy**, a Seattle raccoon with
 short-spine syndrome — hence the hunched, humpbacked silhouette, the low head,
 the dark grizzled fur, and the stubby tail.
 
@@ -125,7 +125,7 @@ A fully procedural, from-scratch alternative also lives in
 
 ## Credits
 
-- **Jimothy sprite** — modelled on the real "Jimothy Summer" Seattle raccoon;
+- **Jimothy sprite** — modelled on the real Jimothy, a Seattle raccoon;
   the committed run cycle was imported and normalized by `tools/import_sheet.js`,
   and a from-scratch procedural version is available via `tools/gen_jimothy.js`.
 - **Toolbar icon** — the raccoon emoji from
