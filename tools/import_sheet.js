@@ -83,39 +83,29 @@ async function main() {
     if (comp.length < MIN_AREA) for (const a of comp) alpha[a] = 0;
   }
 
-  // 2c) The mask is clean, but Gemini drew a light "glow" outline around each
-  //     raccoon (opaque, part of the shape) that reads as a white rim. Shave it
-  //     with a uniform hard erosion of the mask (a few px all around).
-  const ERODE = Number(process.env.ERODE || 3);
-  for (let pass = 0; pass < ERODE; pass++) {
+  // 2c) The mask is clean, but Gemini drew a light "glow" rim around each raccoon
+  //     that reads as a faint white outline. Trim it with a LIGHT-ONLY erosion:
+  //     only bright, low-saturation edge pixels are shaved. The dark outline, the
+  //     dark legs/feet, the fur, and the saturated cream face are all left intact,
+  //     so nothing thin gets severed or lost.
+  const isRim = (r, g, b) => {
+    const sat = Math.max(r, g, b) - Math.min(r, g, b);
+    const avg = (r + g + b) / 3;
+    return sat <= 48 && avg >= 112;
+  };
+  const RIM_PASSES = Number(process.env.RIM || 3);
+  for (let pass = 0; pass < RIM_PASSES; pass++) {
     const edge = [];
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const a = y * W + x;
       if (alpha[a] === 0) continue;
+      const o = idx(x, y);
+      if (!isRim(data[o], data[o + 1], data[o + 2])) continue;
       if ((x > 0 && alpha[a - 1] === 0) || (x < W - 1 && alpha[a + 1] === 0) ||
           (y > 0 && alpha[a - W] === 0) || (y < H - 1 && alpha[a + W] === 0)) edge.push(a);
     }
     if (!edge.length) break;
     for (const a of edge) alpha[a] = 0;
-  }
-
-  // 2d) Erosion can pinch off a thin piece (e.g. a tail tip) into a small floating
-  //     blob. Re-run the component filter to drop anything tiny that detached.
-  {
-    const MIN_AREA2 = 900;
-    const seen2 = new Uint8Array(W * H);
-    for (let start = 0; start < W * H; start++) {
-      if (alpha[start] === 0 || seen2[start]) continue;
-      const comp = [start]; seen2[start] = 1;
-      for (let qi = 0; qi < comp.length; qi++) {
-        const a = comp[qi], x = a % W, y = (a - x) / W;
-        if (x > 0 && alpha[a - 1] && !seen2[a - 1]) { seen2[a - 1] = 1; comp.push(a - 1); }
-        if (x < W - 1 && alpha[a + 1] && !seen2[a + 1]) { seen2[a + 1] = 1; comp.push(a + 1); }
-        if (y > 0 && alpha[a - W] && !seen2[a - W]) { seen2[a - W] = 1; comp.push(a - W); }
-        if (y < H - 1 && alpha[a + W] && !seen2[a + W]) { seen2[a + W] = 1; comp.push(a + W); }
-      }
-      if (comp.length < MIN_AREA2) for (const a of comp) alpha[a] = 0;
-    }
   }
 
   // Write alpha back into the RGBA buffer.
