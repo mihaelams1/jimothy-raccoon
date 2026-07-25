@@ -28,9 +28,22 @@ page content without ever blocking clicks.
 Some sites (Wikipedia, GitHub, etc.) send a strict CSP whose `img-src` /
 `default-src` doesn't allow the `chrome-extension:` scheme, which blocks the
 sprite from loading. To stay compatible, the content script fetches the sprite
-from the extension and serves it to the page as a **blob URL** (`blob:` is
-permitted by virtually all such policies), so Jimothy renders even on locked-down
-pages.
+from the extension and inlines it as a **`data:` URL** (allowed by virtually all
+such policies — e.g. Wikipedia's `default-src ... data:` and GitHub's
+`img-src ... data:`). A `data:` URL is self-contained, so — unlike a `blob:` URL —
+it doesn't depend on the content script's isolated-world blob registry, which the
+page's resource loader can't always resolve.
+
+### Site reduced-motion resets
+
+Many sites (GitHub, Bootstrap, Tailwind, normalize.css) ship a global
+`@media (prefers-reduced-motion: reduce)` rule that forces
+`animation: none` (or `animation-duration: 0.01ms; animation-iteration-count: 1`)
+on **every** element via `!important`. On a machine with OS "reduce motion"
+enabled, that rule would freeze Jimothy (GitHub) or instantly teleport him to his
+offscreen end-state (Wikipedia). Since Jimothy is pure whimsy, his animation is
+declared `!important` on a high-specificity `#id.class` selector so it outranks
+those universal (`*`) resets and he always runs.
 
 ### Navigation resilience
 

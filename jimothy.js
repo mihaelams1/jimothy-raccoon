@@ -7,7 +7,7 @@
   console.log("[Jimothy] content script injected on", location.href);
 
   const FRAME_URL = chrome.runtime.getURL("assets/jimothy_run.png");
-  let spriteUrl = FRAME_URL; // replaced with a blob: URL once fetched (see below)
+  let spriteUrl = FRAME_URL; // replaced with a data: URL once fetched (see below)
   let raccoon = null;
   let hopTimer = null;
   let guard = null;
@@ -107,9 +107,12 @@
   // Some sites (e.g. Wikipedia) ship a strict Content-Security-Policy whose
   // default-src / img-src does NOT allow the chrome-extension: scheme, so a
   // background-image pointing at chrome-extension://.../jimothy_run.png is
-  // blocked and Jimothy never paints. Those same policies almost always allow
-  // blob: (and data:), so we fetch the sprite from the extension (a same-origin
-  // extension fetch, not governed by the page CSP) and hand the page a blob URL.
+  // blocked and Jimothy never paints. We fetch the sprite from the extension
+  // (a same-extension fetch, not governed by the page CSP) and inline it as a
+  // data: URL. A data: URL is self-contained (unlike a blob: URL, which lives
+  // in the content script's isolated-world registry that the page's resource
+  // loader can't resolve) and is permitted by virtually every strict CSP
+  // (Wikipedia's default-src explicitly allows `data:`).
   function boot() {
     // Respect the per-user toggle (default: on).
     chrome.storage.sync.get({ jimothyEnabled: true }, (cfg) => {
@@ -125,8 +128,17 @@
 
   fetch(FRAME_URL)
     .then((r) => r.blob())
-    .then((blob) => {
-      spriteUrl = URL.createObjectURL(blob);
+    .then(
+      (blob) =>
+        new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => resolve(FRAME_URL);
+          reader.readAsDataURL(blob);
+        })
+    )
+    .then((url) => {
+      spriteUrl = url;
     })
     .catch(() => {
       // Fall back to the extension URL (works on sites without a strict CSP).
