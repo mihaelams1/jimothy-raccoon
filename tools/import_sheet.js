@@ -4,14 +4,22 @@
 // on a common baseline, with a real alpha channel.
 //
 // Usage: node tools/import_sheet.js <source.png>
-//   (defaults to the Gemini image in C:/Temp if no arg given)
 
 const sharp = require("sharp");
 const fs = require("fs");
+const path = require("path");
 
 const FW = 432, FH = 336, N = 5;
-const SRC = process.argv[2] || "C:/Temp/Gemini_Generated_Image_q4324nq4324nq432.png";
-const OUT = "C:/Temp/jimothy-raccoon/assets/jimothy_run.png";
+const ROOT = path.join(__dirname, "..");   // repo root (tools/ -> ..)
+const TOOLS = __dirname;
+// Source image is an external input — pass it as the first CLI arg.
+const SRC = process.argv[2];
+const OUT = path.join(ROOT, "assets", "jimothy_run.png");
+
+if (!SRC) {
+  console.error("Usage: node tools/import_sheet.js <source-image.png>");
+  process.exit(1);
+}
 
 // Background classifier thresholds (see isBg): neutral + bright checker.
 const SAT_BG = 12, LO_A = 160, HI_A = 255;     // strict, for the flood seed/interior
@@ -167,7 +175,7 @@ async function main() {
       .composite([{ input: crop.data, raw: { width: cw, height: ch, channels: 4 }, left, top }])
       .png().toBuffer();
     cells.push({ input: cell, left: k * FW, top: 0 });
-    fs.writeFileSync(`C:/Temp/jimothy-raccoon/tools/frame_${k}.png`, cell);
+    fs.writeFileSync(path.join(TOOLS, `frame_${k}.png`), cell);
   }
 
   const sheet = await sharp({ create: { width: FW * N, height: FH, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })

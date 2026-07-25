@@ -8,6 +8,11 @@
 
 const sharp = require("sharp");
 const fs = require("fs");
+const path = require("path");
+
+const ROOT = path.join(__dirname, "..");        // repo root (tools/ -> ..)
+const TOOLS = __dirname;
+const OUT = path.join(ROOT, "assets", "jimothy_run.png");
 
 const FW = 432;   // frame width
 const FH = 336;   // frame height
@@ -224,11 +229,11 @@ async function main() {
   for (let i = 0; i < N; i++) {
     const png = await sharp(frameSVG(i)).png().toBuffer();
     composites.push({ input: png, left: i * FW, top: 0 });
-    fs.writeFileSync(`C:/Temp/jimothy-raccoon/tools/frame_${i}.png`, png);
+    fs.writeFileSync(path.join(TOOLS, `frame_${i}.png`), png);
   }
 
   const sheetBuf = await sheet.composite(composites).png().toBuffer();
-  fs.writeFileSync("C:/Temp/jimothy-raccoon/assets/jimothy_run.png", sheetBuf);
+  fs.writeFileSync(OUT, sheetBuf);
 
   console.log("Wrote assets/jimothy_run.png (" + FW * N + "x" + FH + ")");
 }

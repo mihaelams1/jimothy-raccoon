@@ -7,7 +7,8 @@
   console.log("[Jimothy] content script injected on", location.href);
 
   const FRAME_URL = chrome.runtime.getURL("assets/jimothy_run.png");
-  let spriteUrl = FRAME_URL; // replaced with a data: URL once fetched (see below)
+  let spriteUrl = null;      // the data: URL, loaded lazily only when enabled
+  let spritePromise = null;  // memoizes the one-time sprite load
   let raccoon = null;
   let hopTimer = null;
   let guard = null;
@@ -65,10 +66,15 @@
   function enable() {
     wantEnabled = true;
     if (raccoon && raccoon.isConnected) return;
-    raccoon = createRaccoon();
-    raccoon.addEventListener("animationend", onCrossEnd);
-    scamper();
-    startGuard();
+    // Load the sprite lazily — only the first time Jimothy is actually enabled,
+    // so disabled pages never pay the fetch/base64 cost of the 566 KB sheet.
+    ensureSprite().then(() => {
+      if (!wantEnabled || (raccoon && raccoon.isConnected)) return;
+      raccoon = createRaccoon();
+      raccoon.addEventListener("animationend", onCrossEnd);
+      scamper();
+      startGuard();
+    });
   }
 
   function disable() {
@@ -83,7 +89,9 @@
   }
 
   // SPA navigations often replace large chunks of the DOM (or the whole <body>),
-  // taking Jimothy with them. Watch for his removal and bring him back.
+  // taking Jimothy with them. Jimothy is appended as a direct child of <html>,
+  // so we only need to watch <html>'s direct children for his removal — not the
+  // whole subtree, which would fire on every descendant mutation the page makes.
   function startGuard() {
     if (guard) return;
     guard = new MutationObserver(() => {
@@ -94,7 +102,7 @@
         scamper();
       }
     });
-    guard.observe(document.documentElement, { childList: true, subtree: true });
+    guard.observe(document.documentElement, { childList: true });
   }
 
   function stopGuard() {
@@ -112,9 +120,32 @@
   // data: URL. A data: URL is self-contained (unlike a blob: URL, which lives
   // in the content script's isolated-world registry that the page's resource
   // loader can't resolve) and is permitted by virtually every strict CSP
-  // (Wikipedia's default-src explicitly allows `data:`).
+  // (Wikipedia's default-src explicitly allows `data:`). Loaded lazily and
+  // memoized so a disabled page never pays this cost.
+  function ensureSprite() {
+    if (spritePromise) return spritePromise;
+    spritePromise = fetch(FRAME_URL)
+      .then((r) => r.blob())
+      .then(
+        (blob) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => resolve(FRAME_URL);
+            reader.readAsDataURL(blob);
+          })
+      )
+      .catch(() => FRAME_URL) // fall back to the extension URL (non-strict-CSP sites)
+      .then((url) => {
+        spriteUrl = url;
+        return url;
+      });
+    return spritePromise;
+  }
+
   function boot() {
-    // Respect the per-user toggle (default: on).
+    // Respect the per-user toggle (default: on). The sprite is only fetched
+    // once enable() runs, so disabled pages do no sprite work at all.
     chrome.storage.sync.get({ jimothyEnabled: true }, (cfg) => {
       if (cfg.jimothyEnabled) enable();
     });
@@ -126,22 +157,5 @@
     });
   }
 
-  fetch(FRAME_URL)
-    .then((r) => r.blob())
-    .then(
-      (blob) =>
-        new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => resolve(FRAME_URL);
-          reader.readAsDataURL(blob);
-        })
-    )
-    .then((url) => {
-      spriteUrl = url;
-    })
-    .catch(() => {
-      // Fall back to the extension URL (works on sites without a strict CSP).
-    })
-    .finally(boot);
+  boot();
 })();
