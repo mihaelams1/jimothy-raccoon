@@ -5,5 +5,6 @@ Thumbs.db
 
 # Generated preview frames + intermediates (the sprite sheet itself is committed)
 tools/frame_*.png
+tools/_mask.png
 tools/emoji_test.png
 tools/twemoji_raccoon.svg
